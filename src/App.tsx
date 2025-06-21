@@ -197,7 +197,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
-        <Router>
+        <Router basename="/nomura-prototype">
           <AppContent />
         </Router>
       </AuthProvider>
