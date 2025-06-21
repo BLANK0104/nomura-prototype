@@ -49,6 +49,7 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
+
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user, logout, isAdmin } = useAuth();
   const navigate = useNavigate();
