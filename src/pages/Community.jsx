@@ -18,7 +18,8 @@ import {
   TrendingUp,
   Image as ImageIcon,
   Video,
-  Smile
+  Smile,
+  Shield
 } from 'lucide-react'
 
 const Community = () => {

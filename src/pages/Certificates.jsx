@@ -5,435 +5,295 @@ import {
   Award, 
   Download, 
   Share2, 
-  Calendar, 
-  Star, 
-  Shield, 
-  Trophy,
-  Medal,
-  Crown,
-  CheckCircle,
   Eye,
-  Filter,
-  Search,
-  ExternalLink,
+  Calendar,
+  MapPin,
+  Users,
+  Star,
+  Trophy,
+  Certificate as CertificateIcon,
   Printer,
-  Mail
+  Mail,
+  CheckCircle,
+  Clock,
+  Filter,
+  Search
 } from 'lucide-react'
 
 const Certificates = () => {
-  const { user, permissions, isAdmin } = useAuth()
-  const [selectedCertificate, setSelectedCertificate] = useState(null)
-  const [filterType, setFilterType] = useState('all')
+  const { user, permissions, isAdmin, mockUsers } = useAuth()
+  const [activeFilter, setActiveFilter] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
+  const [selectedCertificate, setSelectedCertificate] = useState(null)
 
   // Mock certificates data
   const certificates = [
     {
       id: 1,
       title: 'Beach Cleanup Champion',
-      description: 'Awarded for participating in 15+ beach cleanup events',
+      description: 'Awarded for outstanding contribution in beach cleanup activities',
       type: 'participation',
-      issueDate: '2024-06-15',
-      validUntil: '2025-06-15',
-      certificateNumber: 'MBC-2024-001',
-      credentialId: 'bc-001-2024',
-      issuer: 'Mumbai Beach Cleanup Initiative',
-      recipient: user?.name || 'User Name',
-      recipientEmail: user?.email || 'user@example.com',
-      achievement: 'Participated in 15 beach cleanup events',
-      skills: ['Environmental Conservation', 'Community Service', 'Teamwork'],
-      verified: true,
-      blockchain: true,
-      downloadCount: 3,
-      sharedCount: 1,
-      template: 'standard',
-      color: 'from-blue-500 to-cyan-500',
-      icon: Trophy,
-      qrCode: 'https://certificates.mumbaibeachcleanup.com/verify/bc-001-2024'
+      category: 'cleanup',
+      issued: '2024-06-15',
+      event: 'Juhu Beach Mega Cleanup',
+      organizer: 'Mumbai Beach Cleanup Initiative',
+      achievements: ['Collected 25kg waste', 'Led team of 10 volunteers', '5-hour participation'],
+      certificateNumber: 'MBC-2024-001-' + (user?.id || '001'),
+      status: 'verified',
+      downloadUrl: '#',
+      shareUrl: '#',
+      verificationCode: 'MBC' + Date.now().toString().slice(-6),
+      background: 'https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=800&h=600&fit=crop',
+      signature: 'Dr. Sarah Ocean, Director'
     },
     {
       id: 2,
-      title: 'Ocean Guardian Certificate',
-      description: 'Awarded for collecting 100kg+ of beach waste',
-      type: 'impact',
-      issueDate: '2024-05-20',
-      validUntil: '2025-05-20',
-      certificateNumber: 'MBC-2024-002',
-      credentialId: 'og-002-2024',
-      issuer: 'Mumbai Beach Cleanup Initiative',
-      recipient: user?.name || 'User Name',
-      recipientEmail: user?.email || 'user@example.com',
-      achievement: 'Collected over 100kg of beach waste',
-      skills: ['Environmental Impact', 'Waste Management', 'Sustainability'],
-      verified: true,
-      blockchain: true,
-      downloadCount: 5,
-      sharedCount: 2,
-      template: 'premium',
-      color: 'from-green-500 to-emerald-500',
-      icon: Shield,
-      qrCode: 'https://certificates.mumbaibeachcleanup.com/verify/og-002-2024'
+      title: 'Environmental Leadership Certificate',
+      description: 'Recognition for exceptional leadership in environmental conservation',
+      type: 'leadership',
+      category: 'leadership',
+      issued: '2024-05-20',
+      event: 'Volunteer Leadership Program',
+      organizer: 'Mumbai Environmental Council',
+      achievements: ['Organized 5 cleanup events', 'Trained 50+ volunteers', 'Community impact leader'],
+      certificateNumber: 'MEC-2024-L-' + (user?.id || '001'),
+      status: 'verified',
+      downloadUrl: '#',
+      shareUrl: '#',
+      verificationCode: 'MEC' + Date.now().toString().slice(-6),
+      background: 'https://images.unsplash.com/photo-1618477462146-0071f4216b75?w=800&h=600&fit=crop',
+      signature: 'Prof. Rahul Green, President'
     },
     {
       id: 3,
-      title: 'Community Leadership Excellence',
-      description: 'Awarded for outstanding leadership in organizing cleanup events',
-      type: 'leadership',
-      issueDate: '2024-04-10',
-      validUntil: '2025-04-10',
-      certificateNumber: 'MBC-2024-003',
-      credentialId: 'cle-003-2024',
-      issuer: 'Mumbai Beach Cleanup Initiative',
-      recipient: user?.name || 'User Name',
-      recipientEmail: user?.email || 'user@example.com',
-      achievement: 'Demonstrated exceptional leadership in organizing 5+ community cleanup events',
-      skills: ['Leadership', 'Event Management', 'Community Engagement'],
-      verified: true,
-      blockchain: true,
-      downloadCount: 2,
-      sharedCount: 3,
-      template: 'premium',
-      color: 'from-purple-500 to-pink-500',
-      icon: Crown,
-      qrCode: 'https://certificates.mumbaibeachcleanup.com/verify/cle-003-2024',
-      locked: user?.role === 'user' // Only available for volunteers and above
+      title: 'Plastic Warrior Certificate',
+      description: 'Special recognition for dedicated efforts in plastic waste removal',
+      type: 'achievement',
+      category: 'specialization',
+      issued: '2024-04-10',
+      event: 'Plastic-Free Mumbai Campaign',
+      organizer: 'Zero Waste Mumbai',
+      achievements: ['Removed 100kg plastic waste', 'Educated 200+ people', 'Plastic-free lifestyle advocate'],
+      certificateNumber: 'ZWM-2024-PW-' + (user?.id || '001'),
+      status: 'verified',
+      downloadUrl: '#',
+      shareUrl: '#',
+      verificationCode: 'ZWM' + Date.now().toString().slice(-6),
+      background: 'https://images.unsplash.com/photo-1621451537084-482c73073a0f?w=800&h=600&fit=crop',
+      signature: 'Ms. Priya Clean, Founder'
     },
     {
       id: 4,
-      title: 'Environmental Education Specialist',
-      description: 'Completed advanced environmental education assessment',
-      type: 'education',
-      issueDate: '2024-06-01',
-      validUntil: '2026-06-01',
-      certificateNumber: 'MBC-2024-004',
-      credentialId: 'ees-004-2024',
-      issuer: 'Mumbai Beach Cleanup Initiative',
-      recipient: user?.name || 'User Name',
-      recipientEmail: user?.email || 'user@example.com',
-      achievement: 'Passed advanced environmental education assessment with 95% score',
-      skills: ['Environmental Science', 'Education', 'Marine Conservation'],
-      verified: true,
-      blockchain: true,
-      downloadCount: 1,
-      sharedCount: 0,
-      template: 'academic',
-      color: 'from-yellow-500 to-orange-500',
-      icon: Award,
-      qrCode: 'https://certificates.mumbaibeachcleanup.com/verify/ees-004-2024'
+      title: 'Community Impact Award',
+      description: 'Honoring significant contribution to community environmental awareness',
+      type: 'award',
+      category: 'impact',
+      issued: '2024-03-15',
+      event: 'Annual Environmental Awards',
+      organizer: 'Green Mumbai Foundation',
+      achievements: ['Social media influence', 'Community engagement', 'Awareness campaigns'],
+      certificateNumber: 'GMF-2024-CIA-' + (user?.id || '001'),
+      status: 'pending_verification',
+      downloadUrl: '#',
+      shareUrl: '#',
+      verificationCode: 'GMF' + Date.now().toString().slice(-6),
+      background: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop',
+      signature: 'Mr. Amit Green, Director'
     }
   ]
 
-  // Filter certificates based on user role
-  const visibleCertificates = certificates.filter(cert => {
-    if (cert.locked && user?.role === 'user') return false
-    return true
-  })
+  // Filter certificates based on user permissions
+  const visibleCertificates = isAdmin 
+    ? certificates // Admin sees all certificates
+    : certificates.filter(cert => cert.status === 'verified') // Users see only verified ones
 
-  // Apply search and filter
   const filteredCertificates = visibleCertificates.filter(cert => {
+    const matchesFilter = activeFilter === 'all' || cert.category === activeFilter
     const matchesSearch = cert.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          cert.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         cert.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase()))
-    
-    const matchesFilter = filterType === 'all' || cert.type === filterType
-    
-    return matchesSearch && matchesFilter
+                         cert.organizer.toLowerCase().includes(searchTerm.toLowerCase())
+    return matchesFilter && matchesSearch
   })
 
   const certificateTypes = [
-    { id: 'all', name: 'All Certificates', icon: Award },
-    { id: 'participation', name: 'Participation', icon: Trophy },
-    { id: 'impact', name: 'Environmental Impact', icon: Shield },
-    { id: 'leadership', name: 'Leadership', icon: Crown },
-    { id: 'education', name: 'Education', icon: Medal },
+    { id: 'all', name: 'All Certificates', icon: CertificateIcon },
+    { id: 'cleanup', name: 'Cleanup', icon: Award },
+    { id: 'leadership', name: 'Leadership', icon: Trophy },
+    { id: 'specialization', name: 'Specialization', icon: Star },
+    { id: 'impact', name: 'Impact', icon: Users }
   ]
 
-  const downloadCertificate = (certificate) => {
-    console.log(`Downloading certificate: ${certificate.title}`)
-    // In a real app, this would generate and download a PDF certificate
-  }
-
-  const shareCertificate = (certificate) => {
-    console.log(`Sharing certificate: ${certificate.title}`)
-    // In a real app, this would open share options
-  }
-
-  const verifyCertificate = (certificate) => {
-    window.open(certificate.qrCode, '_blank')
-  }
-
-  const getTypeIcon = (type) => {
-    switch (type) {
-      case 'participation': return Trophy
-      case 'impact': return Shield
-      case 'leadership': return Crown
-      case 'education': return Award
-      default: return Medal
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'verified': return 'text-green-600 bg-green-100'
+      case 'pending_verification': return 'text-yellow-600 bg-yellow-100'
+      case 'rejected': return 'text-red-600 bg-red-100'
+      default: return 'text-gray-600 bg-gray-100'
     }
   }
 
-  // Certificate Detail Modal
-  const CertificateModal = ({ certificate, onClose }) => {
-    if (!certificate) return null
+  const getTypeColor = (type) => {
+    switch (type) {
+      case 'participation': return 'text-blue-600 bg-blue-100'
+      case 'leadership': return 'text-purple-600 bg-purple-100'
+      case 'achievement': return 'text-green-600 bg-green-100'
+      case 'award': return 'text-yellow-600 bg-yellow-100'
+      default: return 'text-gray-600 bg-gray-100'
+    }
+  }
 
-    return (
+  const handleDownload = (certificate) => {
+    console.log('Downloading certificate:', certificate.id)
+    // Mock download functionality
+  }
+
+  const handleShare = (certificate) => {
+    console.log('Sharing certificate:', certificate.id)
+    // Mock share functionality
+  }
+
+  const handlePrint = (certificate) => {
+    console.log('Printing certificate:', certificate.id)
+    // Mock print functionality
+  }
+
+  const CertificateModal = ({ certificate, onClose }) => (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+      onClick={onClose}
+    >
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-        onClick={onClose}
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.8, opacity: 0 }}
+        className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-auto"
+        onClick={(e) => e.stopPropagation()}
       >
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-auto"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Certificate Preview */}
-          <div className="relative">
-            {/* Certificate Design */}
-            <div className={`bg-gradient-to-br ${certificate.color} p-8 text-white relative overflow-hidden`}>
-              {/* Background Pattern */}
-              <div className="absolute inset-0 opacity-10">
-                <div className="absolute top-4 right-4 w-32 h-32 rounded-full border-2 border-white"></div>
-                <div className="absolute bottom-4 left-4 w-24 h-24 rounded-full border-2 border-white"></div>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full border border-white/20"></div>
+        {/* Certificate Preview */}
+        <div className="relative bg-gradient-to-br from-blue-50 to-green-50 p-8">
+          <div className="relative bg-white rounded-lg shadow-lg p-8 border-4 border-yellow-400">
+            <div className="text-center space-y-6">
+              <div className="flex justify-center">
+                <Award className="h-16 w-16 text-yellow-500" />
               </div>
               
-              <div className="relative z-10 text-center">
-                {/* Header */}
-                <div className="mb-6">
-                  <div className="text-sm opacity-90 mb-2">MUMBAI BEACH CLEANUP INITIATIVE</div>
-                  <h1 className="text-4xl font-bold mb-2">CERTIFICATE OF ACHIEVEMENT</h1>
-                  <div className="text-sm opacity-90">This certifies that</div>
-                </div>
-                
-                {/* Recipient */}
-                <div className="mb-6">
-                  <div className="text-3xl font-bold mb-2 border-b-2 border-white/30 pb-2 inline-block px-8">
-                    {certificate.recipient}
-                  </div>
-                </div>
-                
-                {/* Achievement */}
-                <div className="mb-6">
-                  <div className="text-lg mb-2">has successfully achieved</div>
-                  <div className="text-2xl font-bold mb-2">{certificate.title}</div>
-                  <div className="text-base opacity-90">{certificate.achievement}</div>
-                </div>
-                
-                {/* Footer */}
-                <div className="flex justify-between items-end">
-                  <div className="text-left">
-                    <div className="text-sm opacity-90">Issue Date</div>
-                    <div className="font-semibold">{certificate.issueDate}</div>
-                  </div>
-                  
-                  <div className="text-center">
-                    <div className={`w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-2`}>
-                      <certificate.icon className="h-8 w-8" />
-                    </div>
-                    <div className="text-xs opacity-75">Verified</div>
-                  </div>
-                  
-                  <div className="text-right">
-                    <div className="text-sm opacity-90">Certificate ID</div>
-                    <div className="font-semibold text-xs">{certificate.certificateNumber}</div>
-                  </div>
-                </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-800 mb-2">{certificate.title}</h1>
+                <p className="text-gray-600">{certificate.description}</p>
               </div>
-            </div>
-            
-            {/* Certificate Details */}
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Left Column */}
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="font-semibold text-gray-800 mb-2">Certificate Details</h3>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Certificate Number:</span>
-                        <span className="font-medium">{certificate.certificateNumber}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Credential ID:</span>
-                        <span className="font-medium">{certificate.credentialId}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Issue Date:</span>
-                        <span className="font-medium">{certificate.issueDate}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Valid Until:</span>
-                        <span className="font-medium">{certificate.validUntil}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Status:</span>
-                        <span className="flex items-center space-x-1">
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                          <span className="text-green-600 font-medium">Verified</span>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-semibold text-gray-800 mb-2">Skills Demonstrated</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {certificate.skills.map(skill => (
-                        <span key={skill} className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Right Column */}
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="font-semibold text-gray-800 mb-2">Verification</h3>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center space-x-2">
-                        <CheckCircle className="h-4 w-4 text-green-500" />
-                        <span>Blockchain Verified</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Shield className="h-4 w-4 text-blue-500" />
-                        <span>Digitally Signed</span>
-                      </div>
-                      <button
-                        onClick={() => verifyCertificate(certificate)}
-                        className="flex items-center space-x-2 text-ocean-600 hover:text-ocean-700"
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                        <span>Verify Online</span>
-                      </button>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-semibold text-gray-800 mb-2">Statistics</h3>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Downloads:</span>
-                        <span className="font-medium">{certificate.downloadCount}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Shares:</span>
-                        <span className="font-medium">{certificate.sharedCount}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+
+              <div className="py-4">
+                <p className="text-lg text-gray-700 mb-2">This certificate is awarded to</p>
+                <h2 className="text-4xl font-bold text-ocean-600 mb-4">{user?.name}</h2>
+                <p className="text-gray-600">For outstanding contribution in</p>
+                <h3 className="text-xl font-semibold text-gray-800">{certificate.event}</h3>
               </div>
-              
-              {/* Actions */}
-              <div className="flex justify-center space-x-4 mt-6 pt-6 border-t">
-                <button
-                  onClick={() => downloadCertificate(certificate)}
-                  className="btn-primary flex items-center space-x-2"
-                >
-                  <Download className="h-4 w-4" />
-                  <span>Download PDF</span>
-                </button>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-4">
+                {certificate.achievements.map((achievement, index) => (
+                  <div key={index} className="text-center">
+                    <CheckCircle className="h-6 w-6 text-green-500 mx-auto mb-2" />
+                    <p className="text-sm text-gray-600">{achievement}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex justify-between items-end pt-8">
+                <div className="text-left">
+                  <p className="text-sm text-gray-600">Issued on</p>
+                  <p className="font-semibold">{new Date(certificate.issued).toLocaleDateString()}</p>
+                  <p className="text-xs text-gray-500 mt-2">Certificate No: {certificate.certificateNumber}</p>
+                </div>
                 
-                <button
-                  onClick={() => shareCertificate(certificate)}
-                  className="btn-outline flex items-center space-x-2"
-                >
-                  <Share2 className="h-4 w-4" />
-                  <span>Share</span>
-                </button>
-                
-                <button
-                  onClick={() => window.print()}
-                  className="btn-outline flex items-center space-x-2"
-                >
-                  <Printer className="h-4 w-4" />
-                  <span>Print</span>
-                </button>
-                
-                <button
-                  onClick={() => verifyCertificate(certificate)}
-                  className="btn-outline flex items-center space-x-2"
-                >
-                  <Eye className="h-4 w-4" />
-                  <span>Verify</span>
-                </button>
+                <div className="text-right">
+                  <div className="mb-2">
+                    <div className="w-32 h-16 bg-gray-100 rounded flex items-center justify-center">
+                      <span className="text-xs text-gray-500">Digital Signature</span>
+                    </div>
+                  </div>
+                  <p className="text-sm font-semibold">{certificate.signature}</p>
+                  <p className="text-xs text-gray-600">{certificate.organizer}</p>
+                </div>
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="p-6 bg-gray-50 flex justify-between">
+          <div className="text-sm text-gray-600">
+            <p>Verification Code: <span className="font-mono font-bold">{certificate.verificationCode}</span></p>
+          </div>
+          <div className="flex space-x-3">
+            <button
+              onClick={() => handleDownload(certificate)}
+              className="btn-outline flex items-center space-x-2"
+            >
+              <Download className="h-4 w-4" />
+              <span>Download</span>
+            </button>
+            <button
+              onClick={() => handlePrint(certificate)}
+              className="btn-outline flex items-center space-x-2"
+            >
+              <Printer className="h-4 w-4" />
+              <span>Print</span>
+            </button>
+            <button
+              onClick={() => handleShare(certificate)}
+              className="btn-primary flex items-center space-x-2"
+            >
+              <Share2 className="h-4 w-4" />
+              <span>Share</span>
+            </button>
+          </div>
+        </div>
       </motion.div>
-    )
-  }
+    </motion.div>
+  )
 
   return (
     <div className="min-h-screen p-6 bg-gradient-to-br from-ocean-50 to-green-50">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
+          className="mb-8"
         >
-          <h1 className="text-4xl font-bold gradient-text mb-4">
-            🏆 My Certificates
-          </h1>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Your earned certificates showcasing environmental achievements and community contributions
-          </p>
-        </motion.div>
-
-        {/* Stats Overview */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
-        >
-          <div className="card text-center">
-            <Award className="h-8 w-8 text-ocean-500 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-gray-800">{filteredCertificates.length}</div>
-            <div className="text-sm text-gray-600">Total Certificates</div>
-          </div>
-          
-          <div className="card text-center">
-            <CheckCircle className="h-8 w-8 text-green-500 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-gray-800">
-              {filteredCertificates.filter(c => c.verified).length}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div>
+              <h1 className="text-3xl font-bold gradient-text mb-2 flex items-center space-x-2">
+                <CertificateIcon className="h-8 w-8" />
+                <span>My Certificates</span>
+              </h1>
+              <p className="text-gray-600">
+                View and manage your environmental impact certificates and awards
+              </p>
             </div>
-            <div className="text-sm text-gray-600">Verified</div>
-          </div>
-          
-          <div className="card text-center">
-            <Download className="h-8 w-8 text-blue-500 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-gray-800">
-              {filteredCertificates.reduce((sum, c) => sum + c.downloadCount, 0)}
+            
+            <div className="flex items-center space-x-4 mt-4 md:mt-0">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">{filteredCertificates.filter(c => c.status === 'verified').length}</div>
+                <div className="text-xs text-gray-600">Verified</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-yellow-600">{filteredCertificates.filter(c => c.status === 'pending_verification').length}</div>
+                <div className="text-xs text-gray-600">Pending</div>
+              </div>
             </div>
-            <div className="text-sm text-gray-600">Downloads</div>
-          </div>
-          
-          <div className="card text-center">
-            <Share2 className="h-8 w-8 text-purple-500 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-gray-800">
-              {filteredCertificates.reduce((sum, c) => sum + c.sharedCount, 0)}
-            </div>
-            <div className="text-sm text-gray-600">Shares</div>
           </div>
         </motion.div>
 
-        {/* Filters and Search */}
+        {/* Filters */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="card mb-8"
+          className="card"
         >
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
             
@@ -449,16 +309,16 @@ const Certificates = () => {
               />
             </div>
 
-            {/* Type Filters */}
+            {/* Category Filters */}
             <div className="flex flex-wrap gap-2">
               {certificateTypes.map(type => {
                 const Icon = type.icon
                 return (
                   <button
                     key={type.id}
-                    onClick={() => setFilterType(type.id)}
+                    onClick={() => setActiveFilter(type.id)}
                     className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      filterType === type.id
+                      activeFilter === type.id
                         ? 'bg-ocean-500 text-white'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
@@ -474,110 +334,96 @@ const Certificates = () => {
 
         {/* Certificates Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCertificates.map((certificate, index) => {
-            const Icon = certificate.icon
-            
-            return (
-              <motion.div
-                key={certificate.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="card hover:shadow-lg transition-shadow cursor-pointer"
-                onClick={() => setSelectedCertificate(certificate)}
-              >
-                {/* Certificate Preview */}
-                <div className={`h-32 bg-gradient-to-br ${certificate.color} rounded-lg mb-4 p-4 text-white relative overflow-hidden`}>
-                  {/* Background Pattern */}
-                  <div className="absolute inset-0 opacity-20">
-                    <div className="absolute top-2 right-2 w-16 h-16 rounded-full border border-white"></div>
-                    <div className="absolute bottom-2 left-2 w-12 h-12 rounded-full border border-white"></div>
+          {filteredCertificates.map((certificate, index) => (
+            <motion.div
+              key={certificate.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="card hover:shadow-lg transition-shadow cursor-pointer"
+              onClick={() => setSelectedCertificate(certificate)}
+            >
+              {/* Certificate Preview */}
+              <div className="relative h-48 mb-4 rounded-lg overflow-hidden bg-gradient-to-br from-blue-100 to-green-100">
+                <div className="absolute inset-0 bg-white/90 flex items-center justify-center">
+                  <div className="text-center">
+                    <Award className="h-12 w-12 text-yellow-500 mx-auto mb-2" />
+                    <h3 className="font-bold text-gray-800">{certificate.title}</h3>
+                    <p className="text-sm text-gray-600 mt-1">{certificate.organizer}</p>
                   </div>
+                </div>
+                
+                {/* Status Badge */}
+                <span className={`absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(certificate.status)}`}>
+                  {certificate.status.replace('_', ' ')}
+                </span>
+              </div>
+
+              {/* Certificate Info */}
+              <div className="space-y-3">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-800 mb-1">
+                    {certificate.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm line-clamp-2">
+                    {certificate.description}
+                  </p>
+                </div>
+
+                {/* Certificate Details */}
+                <div className="space-y-2 text-sm text-gray-600">
+                  <div className="flex items-center space-x-2">
+                    <Calendar className="h-4 w-4" />
+                    <span>Issued: {new Date(certificate.issued).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <MapPin className="h-4 w-4" />
+                    <span>{certificate.event}</span>
+                  </div>
+                </div>
+
+                {/* Type Badge */}
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(certificate.type)}`}>
+                  {certificate.type}
+                </span>
+
+                {/* Action Buttons */}
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleDownload(certificate)
+                    }}
+                    className="flex items-center space-x-2 text-blue-600 hover:text-blue-700 text-sm font-medium"
+                  >
+                    <Download className="h-4 w-4" />
+                    <span>Download</span>
+                  </button>
                   
-                  <div className="relative z-10 flex items-center justify-between h-full">
-                    <div>
-                      <div className="text-xs opacity-90 mb-1">CERTIFICATE</div>
-                      <div className="font-bold text-sm">{certificate.title}</div>
-                    </div>
-                    <Icon className="h-8 w-8 opacity-80" />
-                  </div>
-                </div>
-
-                {/* Certificate Info */}
-                <div className="space-y-3">
-                  <div>
-                    <h3 className="font-bold text-gray-800 mb-1">{certificate.title}</h3>
-                    <p className="text-gray-600 text-sm line-clamp-2">
-                      {certificate.description}
-                    </p>
-                  </div>
-
-                  {/* Certificate Details */}
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-600">Issue Date:</span>
-                      <span className="font-medium">{certificate.issueDate}</span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-600">Valid Until:</span>
-                      <span className="font-medium">{certificate.validUntil}</span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-600">Status:</span>
-                      <div className="flex items-center space-x-1">
-                        <CheckCircle className="h-4 w-4 text-green-500" />
-                        <span className="text-green-600 font-medium">Verified</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Skills */}
-                  <div>
-                    <div className="text-xs text-gray-600 mb-2">Skills Demonstrated:</div>
-                    <div className="flex flex-wrap gap-1">
-                      {certificate.skills.slice(0, 2).map(skill => (
-                        <span key={skill} className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
-                          {skill}
-                        </span>
-                      ))}
-                      {certificate.skills.length > 2 && (
-                        <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
-                          +{certificate.skills.length - 2} more
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Quick Actions */}
-                  <div className="flex space-x-2 pt-2 border-t border-gray-100">
+                  <div className="flex items-center space-x-2">
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
-                        downloadCertificate(certificate)
+                        handleShare(certificate)
                       }}
-                      className="flex-1 btn-outline text-sm py-1"
+                      className="text-gray-600 hover:text-green-600"
                     >
-                      <Download className="h-3 w-3 mr-1" />
-                      Download
+                      <Share2 className="h-4 w-4" />
                     </button>
-                    
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
-                        shareCertificate(certificate)
+                        setSelectedCertificate(certificate)
                       }}
-                      className="flex-1 btn-outline text-sm py-1"
+                      className="text-gray-600 hover:text-blue-600"
                     >
-                      <Share2 className="h-3 w-3 mr-1" />
-                      Share
+                      <Eye className="h-4 w-4" />
                     </button>
                   </div>
                 </div>
-              </motion.div>
-            )
-          })}
+              </div>
+            </motion.div>
+          ))}
         </div>
 
         {/* No Certificates Message */}
@@ -587,25 +433,25 @@ const Certificates = () => {
             animate={{ opacity: 1 }}
             className="text-center py-12"
           >
-            <Award className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <CertificateIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-600 mb-2">No certificates found</h3>
             <p className="text-gray-500">
               {searchTerm 
                 ? `No certificates match your search "${searchTerm}"`
-                : 'Complete assessments and participate in events to earn certificates'
+                : 'Participate in more cleanup activities to earn certificates'
               }
             </p>
           </motion.div>
         )}
-
-        {/* Certificate Detail Modal */}
-        {selectedCertificate && (
-          <CertificateModal 
-            certificate={selectedCertificate} 
-            onClose={() => setSelectedCertificate(null)}
-          />
-        )}
       </div>
+
+      {/* Certificate Modal */}
+      {selectedCertificate && (
+        <CertificateModal
+          certificate={selectedCertificate}
+          onClose={() => setSelectedCertificate(null)}
+        />
+      )}
     </div>
   )
 }

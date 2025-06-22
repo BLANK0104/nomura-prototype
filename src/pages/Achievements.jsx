@@ -2,289 +2,215 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useAuth } from '../contexts/AuthContext'
 import { 
-  Award, 
   Trophy, 
-  Medal, 
+  Award, 
   Star, 
-  Crown, 
-  Shield,
+  Crown,
   Target,
   Zap,
   Heart,
   Users,
-  Calendar,
   Recycle,
-  Download,
-  Share2,
-  Lock,
-  CheckCircle,
+  Calendar,
+  Shield,
+  Flame,
   Gift,
-  Flame
+  CheckCircle,
+  Lock,
+  TrendingUp,
+  Camera,
+  Share2
 } from 'lucide-react'
 
 const Achievements = () => {
-  const { user, permissions, isAdmin } = useAuth()
+  const { user, permissions, isAdmin, mockUsers } = useAuth()
   const [activeCategory, setActiveCategory] = useState('all')
-  const [showCertificate, setShowCertificate] = useState(null)
+  const [viewMode, setViewMode] = useState('grid')
 
   // Achievement categories
   const categories = [
-    { id: 'all', name: 'All', icon: Award },
-    { id: 'participation', name: 'Participation', icon: Users },
-    { id: 'impact', name: 'Environmental Impact', icon: Recycle },
+    { id: 'all', name: 'All Achievements', icon: Trophy },
+    { id: 'cleanup', name: 'Cleanup', icon: Recycle },
+    { id: 'social', name: 'Social', icon: Users },
     { id: 'leadership', name: 'Leadership', icon: Crown },
-    { id: 'community', name: 'Community', icon: Heart },
-    { id: 'special', name: 'Special', icon: Star },
+    { id: 'consistency', name: 'Consistency', icon: Calendar },
+    { id: 'special', name: 'Special', icon: Star }
   ]
 
-  // Comprehensive achievements system
+  // Mock achievements data
   const achievements = [
-    // Participation Achievements
     {
       id: 1,
       title: 'First Steps',
-      description: 'Attend your first beach cleanup event',
-      category: 'participation',
-      icon: Target,
+      description: 'Complete your first beach cleanup',
+      icon: '👶',
+      category: 'cleanup',
+      difficulty: 'easy',
       points: 50,
-      rarity: 'common',
-      unlocked: true,
+      earned: true,
+      earnedDate: '2024-03-15',
       progress: 1,
-      requirement: 1,
-      unlockedDate: '2024-03-20',
-      certificate: true,
-      badge: '🏖️'
+      target: 1,
+      rarity: 'common'
     },
     {
       id: 2,
-      title: 'Weekend Warrior',
-      description: 'Attend 5 cleanup events',
-      category: 'participation',
-      icon: Calendar,
-      points: 150,
-      rarity: 'common',
-      unlocked: true,
-      progress: 5,
-      requirement: 5,
-      unlockedDate: '2024-04-15',
-      certificate: true,
-      badge: '⚡'
+      title: 'Eco Warrior',
+      description: 'Participate in 10 beach cleanups',
+      icon: '🌱',
+      category: 'cleanup',
+      difficulty: 'medium',
+      points: 200,
+      earned: user?.eventsParticipated >= 10,
+      earnedDate: user?.eventsParticipated >= 10 ? '2024-05-20' : null,
+      progress: user?.eventsParticipated || 0,
+      target: 10,
+      rarity: 'uncommon'
     },
     {
       id: 3,
-      title: 'Consistency Champion',
-      description: 'Attend 15 cleanup events',
-      category: 'participation',
-      icon: Medal,
-      points: 300,
-      rarity: 'rare',
-      unlocked: user?.eventsParticipated >= 15,
-      progress: user?.eventsParticipated || 0,
-      requirement: 15,
-      unlockedDate: user?.eventsParticipated >= 15 ? '2024-05-20' : null,
-      certificate: true,
-      badge: '🏆'
+      title: 'Beach Guardian',
+      description: 'Collect 100kg of waste from beaches',
+      icon: '🏖️',
+      category: 'cleanup',
+      difficulty: 'hard',
+      points: 500,
+      earned: (user?.wasteCollected || 0) >= 100,
+      earnedDate: (user?.wasteCollected || 0) >= 100 ? '2024-06-01' : null,
+      progress: user?.wasteCollected || 0,
+      target: 100,
+      rarity: 'rare'
     },
     {
       id: 4,
-      title: 'Cleanup Legend',
-      description: 'Attend 50 cleanup events',
-      category: 'participation',
-      icon: Crown,
-      points: 1000,
-      rarity: 'legendary',
-      unlocked: user?.eventsParticipated >= 50,
-      progress: user?.eventsParticipated || 0,
-      requirement: 50,
-      unlockedDate: user?.eventsParticipated >= 50 ? '2024-06-01' : null,
-      certificate: true,
-      badge: '👑'
+      title: 'Social Butterfly',
+      description: 'Get 100 likes on your cleanup posts',
+      icon: '🦋',
+      category: 'social',
+      difficulty: 'medium',
+      points: 150,
+      earned: false,
+      progress: 45,
+      target: 100,
+      rarity: 'uncommon'
     },
-
-    // Environmental Impact Achievements
     {
       id: 5,
-      title: 'Plastic Fighter',
-      description: 'Collect 10kg of plastic waste',
-      category: 'impact',
-      icon: Recycle,
-      points: 100,
-      rarity: 'common',
-      unlocked: user?.wasteCollected >= 10,
-      progress: user?.wasteCollected || 0,
-      requirement: 10,
-      unlockedDate: user?.wasteCollected >= 10 ? '2024-04-01' : null,
-      certificate: true,
-      badge: '♻️'
+      title: 'Community Leader',
+      description: 'Organize 5 cleanup events',
+      icon: '👑',
+      category: 'leadership',
+      difficulty: 'hard',
+      points: 750,
+      earned: user?.role === 'admin' || user?.role === 'volunteer',
+      earnedDate: user?.role === 'admin' || user?.role === 'volunteer' ? '2024-04-10' : null,
+      progress: user?.role === 'admin' || user?.role === 'volunteer' ? 5 : 0,
+      target: 5,
+      rarity: 'epic'
     },
     {
       id: 6,
-      title: 'Waste Warrior',
-      description: 'Collect 50kg of waste',
-      category: 'impact',
-      icon: Shield,
-      points: 250,
-      rarity: 'rare',
-      unlocked: user?.wasteCollected >= 50,
-      progress: user?.wasteCollected || 0,
-      requirement: 50,
-      unlockedDate: user?.wasteCollected >= 50 ? '2024-05-10' : null,
-      certificate: true,
-      badge: '🛡️'
+      title: 'Consistency Champion',
+      description: 'Maintain a 30-day cleanup streak',
+      icon: '🔥',
+      category: 'consistency',
+      difficulty: 'hard',
+      points: 600,
+      earned: true,
+      earnedDate: '2024-05-15',
+      progress: 30,
+      target: 30,
+      rarity: 'rare'
     },
     {
       id: 7,
-      title: 'Ocean Guardian',
-      description: 'Collect 100kg of waste',
-      category: 'impact',
-      icon: Trophy,
-      points: 500,
-      rarity: 'epic',
-      unlocked: user?.wasteCollected >= 100,
-      progress: user?.wasteCollected || 0,
-      requirement: 100,
-      unlockedDate: user?.wasteCollected >= 100 ? '2024-06-15' : null,
-      certificate: true,
-      badge: '🌊'
+      title: 'Plastic Fighter',
+      description: 'Remove 50kg of plastic waste',
+      icon: '♻️',
+      category: 'cleanup',
+      difficulty: 'medium',
+      points: 300,
+      earned: (user?.wasteCollected || 0) >= 50,
+      earnedDate: (user?.wasteCollected || 0) >= 50 ? '2024-05-25' : null,
+      progress: Math.min(user?.wasteCollected || 0, 50),
+      target: 50,
+      rarity: 'uncommon'
     },
-
-    // Leadership Achievements
     {
       id: 8,
-      title: 'Team Leader',
-      description: 'Lead your first cleanup team',
-      category: 'leadership',
-      icon: Users,
+      title: 'Photography Pro',
+      description: 'Share 25 cleanup photos',
+      icon: '📸',
+      category: 'social',
+      difficulty: 'medium',
       points: 200,
-      rarity: 'rare',
-      unlocked: user?.role === 'volunteer' || user?.role === 'moderator' || user?.role === 'admin',
-      progress: user?.role === 'volunteer' || user?.role === 'moderator' || user?.role === 'admin' ? 1 : 0,
-      requirement: 1,
-      unlockedDate: user?.role === 'volunteer' ? '2024-04-20' : null,
-      certificate: true,
-      badge: '👥'
+      earned: false,
+      progress: 12,
+      target: 25,
+      rarity: 'uncommon'
     },
     {
       id: 9,
-      title: 'Event Organizer',
-      description: 'Organize 5 cleanup events',
-      category: 'leadership',
-      icon: Calendar,
-      points: 400,
-      rarity: 'epic',
-      unlocked: permissions?.canCreateEvents && user?.role !== 'user',
-      progress: permissions?.canCreateEvents ? 3 : 0,
-      requirement: 5,
-      unlockedDate: null,
-      certificate: true,
-      badge: '📅'
+      title: 'Early Bird',
+      description: 'Join 5 sunrise cleanup sessions',
+      icon: '🌅',
+      category: 'special',
+      difficulty: 'medium',
+      points: 250,
+      earned: false,
+      progress: 3,
+      target: 5,
+      rarity: 'rare'
     },
-
-    // Community Achievements
     {
       id: 10,
-      title: 'Social Butterfly',
-      description: 'Share 10 cleanup posts on social media',
-      category: 'community',
-      icon: Heart,
-      points: 100,
-      rarity: 'common',
-      unlocked: true,
-      progress: 12,
-      requirement: 10,
-      unlockedDate: '2024-05-01',
-      certificate: false,
-      badge: '🦋'
-    },
-    {
-      id: 11,
-      title: 'Community Leader',
-      description: 'Get 100 likes on your cleanup posts',
-      category: 'community',
-      icon: Star,
-      points: 200,
-      rarity: 'rare',
-      unlocked: user?.role !== 'user',
-      progress: user?.role !== 'user' ? 156 : 45,
-      requirement: 100,
-      unlockedDate: user?.role !== 'user' ? '2024-05-15' : null,
-      certificate: true,
-      badge: '⭐'
-    },
-
-    // Special Achievements
-    {
-      id: 12,
-      title: 'Early Bird',
-      description: 'Attend 10 morning cleanup events (before 8 AM)',
+      title: 'Platform Pioneer',
+      description: 'Be among the first 100 users to join',
+      icon: '🚀',
       category: 'special',
-      icon: Zap,
-      points: 300,
-      rarity: 'epic',
-      unlocked: true,
-      progress: 12,
-      requirement: 10,
-      unlockedDate: '2024-06-01',
-      certificate: true,
-      badge: '🌅'
-    },
-    {
-      id: 13,
-      title: 'Platform Founding Member',
-      description: 'Be among the first 100 users to join the platform',
-      category: 'special',
-      icon: Crown,
-      points: 500,
-      rarity: 'legendary',
-      unlocked: user?.id <= 4, // First 4 users in our mock data
+      difficulty: 'legendary',
+      points: 1000,
+      earned: user?.id <= 4, // Mock condition
+      earnedDate: user?.id <= 4 ? '2024-01-15' : null,
       progress: user?.id <= 4 ? 1 : 0,
-      requirement: 1,
-      unlockedDate: user?.id <= 4 ? '2024-01-15' : null,
-      certificate: true,
-      badge: '🎖️'
+      target: 1,
+      rarity: 'legendary'
     }
   ]
 
-  // Filter achievements by category
+  // Filter achievements
   const filteredAchievements = achievements.filter(achievement => 
     activeCategory === 'all' || achievement.category === activeCategory
   )
 
-  // Calculate user stats
-  const totalAchievements = achievements.length
-  const unlockedAchievements = achievements.filter(a => a.unlocked).length
-  const totalPoints = achievements.filter(a => a.unlocked).reduce((sum, a) => sum + a.points, 0)
-  const completionRate = Math.round((unlockedAchievements / totalAchievements) * 100)
-
   const getRarityColor = (rarity) => {
     switch (rarity) {
-      case 'common': return 'bg-gray-100 text-gray-800 border-gray-300'
-      case 'rare': return 'bg-blue-100 text-blue-800 border-blue-300'
-      case 'epic': return 'bg-purple-100 text-purple-800 border-purple-300'
-      case 'legendary': return 'bg-yellow-100 text-yellow-800 border-yellow-300'
-      default: return 'bg-gray-100 text-gray-800 border-gray-300'
+      case 'common': return 'from-gray-400 to-gray-500'
+      case 'uncommon': return 'from-green-400 to-green-500'
+      case 'rare': return 'from-blue-400 to-blue-500'
+      case 'epic': return 'from-purple-400 to-purple-500'
+      case 'legendary': return 'from-yellow-400 to-orange-500'
+      default: return 'from-gray-400 to-gray-500'
     }
   }
 
-  const getRarityGradient = (rarity) => {
-    switch (rarity) {
-      case 'common': return 'from-gray-400 to-gray-600'
-      case 'rare': return 'from-blue-400 to-blue-600'
-      case 'epic': return 'from-purple-400 to-purple-600'
-      case 'legendary': return 'from-yellow-400 to-yellow-600'
-      default: return 'from-gray-400 to-gray-600'
+  const getDifficultyColor = (difficulty) => {
+    switch (difficulty) {
+      case 'easy': return 'text-green-600 bg-green-100'
+      case 'medium': return 'text-yellow-600 bg-yellow-100'
+      case 'hard': return 'text-red-600 bg-red-100'
+      case 'legendary': return 'text-purple-600 bg-purple-100'
+      default: return 'text-gray-600 bg-gray-100'
     }
   }
 
-  const downloadCertificate = (achievement) => {
-    // Mock certificate download
-    console.log(`Downloading certificate for: ${achievement.title}`)
-    // In a real app, this would generate and download a PDF certificate
-  }
+  const earnedAchievements = achievements.filter(a => a.earned)
+  const totalPoints = earnedAchievements.reduce((sum, a) => sum + a.points, 0)
+  const completionRate = Math.round((earnedAchievements.length / achievements.length) * 100)
 
   return (
     <div className="min-h-screen p-6 bg-gradient-to-br from-ocean-50 to-green-50">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Header */}
         <motion.div
@@ -292,44 +218,80 @@ const Achievements = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold gradient-text mb-4">
-              🏆 Achievements & Certificates
-            </h1>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              Track your environmental impact and celebrate your contributions to Mumbai's beaches
-            </p>
-          </div>
-
-          {/* Stats Overview */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div className="card text-center">
-              <div className="text-3xl font-bold text-ocean-600 mb-1">{unlockedAchievements}</div>
-              <div className="text-sm text-gray-600">Achievements Unlocked</div>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div>
+              <h1 className="text-3xl font-bold gradient-text mb-2 flex items-center space-x-2">
+                <Trophy className="h-8 w-8" />
+                <span>Achievements</span>
+              </h1>
+              <p className="text-gray-600">
+                Track your progress and unlock rewards for your environmental impact
+              </p>
             </div>
-            <div className="card text-center">
-              <div className="text-3xl font-bold text-green-600 mb-1">{totalPoints}</div>
-              <div className="text-sm text-gray-600">Total Points</div>
-            </div>
-            <div className="card text-center">
-              <div className="text-3xl font-bold text-purple-600 mb-1">{completionRate}%</div>
-              <div className="text-sm text-gray-600">Completion Rate</div>
-            </div>
-            <div className="card text-center">
-              <div className="text-3xl font-bold text-yellow-600 mb-1">
-                {achievements.filter(a => a.unlocked && a.certificate).length}
+            
+            <div className="flex items-center space-x-4 mt-4 md:mt-0">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-yellow-600">{earnedAchievements.length}</div>
+                <div className="text-xs text-gray-600">Earned</div>
               </div>
-              <div className="text-sm text-gray-600">Certificates</div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-600">{totalPoints}</div>
+                <div className="text-xs text-gray-600">Points</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">{completionRate}%</div>
+                <div className="text-xs text-gray-600">Complete</div>
+              </div>
             </div>
           </div>
         </motion.div>
 
-        {/* Category Filter */}
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="card text-center"
+          >
+            <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Trophy className="h-8 w-8 text-white" />
+            </div>
+            <div className="text-2xl font-bold text-gray-800 mb-1">{earnedAchievements.length}/{achievements.length}</div>
+            <div className="text-gray-600">Achievements Unlocked</div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="card text-center"
+          >
+            <div className="w-16 h-16 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Star className="h-8 w-8 text-white" />
+            </div>
+            <div className="text-2xl font-bold text-gray-800 mb-1">{totalPoints}</div>
+            <div className="text-gray-600">Achievement Points</div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="card text-center"
+          >
+            <div className="w-16 h-16 bg-gradient-to-r from-green-400 to-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <TrendingUp className="h-8 w-8 text-white" />
+            </div>
+            <div className="text-2xl font-bold text-gray-800 mb-1">{completionRate}%</div>
+            <div className="text-gray-600">Completion Rate</div>
+          </motion.div>
+        </div>
+
+        {/* Category Filters */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="card mb-8"
+          className="card"
         >
           <div className="flex flex-wrap gap-2">
             {categories.map(category => {
@@ -354,142 +316,87 @@ const Achievements = () => {
 
         {/* Achievements Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredAchievements.map((achievement, index) => {
-            const Icon = achievement.icon
-            const progressPercentage = Math.min((achievement.progress / achievement.requirement) * 100, 100)
-            
-            return (
-              <motion.div
-                key={achievement.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className={`card relative overflow-hidden ${
-                  achievement.unlocked ? 'ring-2 ring-green-200' : 'opacity-75'
-                }`}
-              >
-                {/* Rarity Badge */}
-                <div className={`absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-medium border ${getRarityColor(achievement.rarity)}`}>
-                  {achievement.rarity}
+          {filteredAchievements.map((achievement, index) => (
+            <motion.div
+              key={achievement.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className={`card hover:shadow-lg transition-all relative overflow-hidden ${
+                achievement.earned ? 'ring-2 ring-yellow-400' : 'opacity-75'
+              }`}
+            >
+              {/* Rarity Background */}
+              <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${getRarityColor(achievement.rarity)}`}></div>
+              
+              {/* Achievement Icon */}
+              <div className="flex items-start justify-between mb-4">
+                <div className={`text-4xl p-3 rounded-lg ${achievement.earned ? 'bg-yellow-100' : 'bg-gray-100'}`}>
+                  {achievement.earned ? achievement.icon : '🔒'}
                 </div>
+                <div className="flex flex-col items-end space-y-2">
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(achievement.difficulty)}`}>
+                    {achievement.difficulty}
+                  </span>
+                  {achievement.earned && (
+                    <CheckCircle className="h-6 w-6 text-green-500" />
+                  )}
+                </div>
+              </div>
 
-                {/* Achievement Icon */}
-                <div className="text-center mb-4">
-                  <div className={`w-20 h-20 mx-auto rounded-full bg-gradient-to-r ${getRarityGradient(achievement.rarity)} flex items-center justify-center mb-3 ${
-                    achievement.unlocked ? 'animate-pulse' : 'grayscale'
-                  }`}>
-                    {achievement.unlocked ? (
-                      <span className="text-3xl">{achievement.badge}</span>
-                    ) : (
-                      <Lock className="h-8 w-8 text-white" />
-                    )}
-                  </div>
-                  
-                  <h3 className="text-lg font-bold text-gray-800 mb-2">
+              {/* Achievement Info */}
+              <div className="space-y-3">
+                <div>
+                  <h3 className={`text-lg font-bold ${achievement.earned ? 'text-gray-800' : 'text-gray-500'}`}>
                     {achievement.title}
                   </h3>
-                  <p className="text-gray-600 text-sm mb-3">
+                  <p className={`text-sm ${achievement.earned ? 'text-gray-600' : 'text-gray-400'}`}>
                     {achievement.description}
                   </p>
                 </div>
 
                 {/* Progress Bar */}
-                <div className="mb-4">
-                  <div className="flex justify-between text-sm text-gray-600 mb-1">
+                <div>
+                  <div className="flex justify-between text-xs text-gray-600 mb-1">
                     <span>Progress</span>
-                    <span>{achievement.progress}/{achievement.requirement}</span>
+                    <span>{achievement.progress}/{achievement.target}</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div 
-                      className={`bg-gradient-to-r ${getRarityGradient(achievement.rarity)} h-2 rounded-full transition-all duration-300`}
-                      style={{ width: `${progressPercentage}%` }}
+                      className={`h-2 rounded-full transition-all duration-300 ${
+                        achievement.earned 
+                          ? 'bg-gradient-to-r from-green-500 to-green-600' 
+                          : 'bg-gradient-to-r from-blue-500 to-blue-600'
+                      }`}
+                      style={{ width: `${Math.min((achievement.progress / achievement.target) * 100, 100)}%` }}
                     ></div>
                   </div>
                 </div>
 
-                {/* Points and Status */}
-                <div className="flex items-center justify-between mb-4">
+                {/* Points and Date */}
+                <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                   <div className="flex items-center space-x-2">
                     <Star className="h-4 w-4 text-yellow-500" />
-                    <span className="font-medium text-gray-800">{achievement.points} pts</span>
+                    <span className="text-sm font-medium text-yellow-600">{achievement.points} pts</span>
                   </div>
-                  
-                  {achievement.unlocked && (
-                    <div className="flex items-center space-x-1 text-green-600">
-                      <CheckCircle className="h-4 w-4" />
-                      <span className="text-sm font-medium">Unlocked</span>
-                    </div>
+                  {achievement.earned && achievement.earnedDate && (
+                    <span className="text-xs text-gray-500">
+                      Earned {new Date(achievement.earnedDate).toLocaleDateString()}
+                    </span>
                   )}
                 </div>
 
-                {/* Unlocked Date */}
-                {achievement.unlocked && achievement.unlockedDate && (
-                  <div className="text-xs text-gray-500 mb-4">
-                    Unlocked on {achievement.unlockedDate}
-                  </div>
+                {/* Share Button for Earned Achievements */}
+                {achievement.earned && (
+                  <button className="w-full btn-outline text-sm flex items-center justify-center space-x-2">
+                    <Share2 className="h-4 w-4" />
+                    <span>Share Achievement</span>
+                  </button>
                 )}
-
-                {/* Actions */}
-                {achievement.unlocked && (
-                  <div className="flex space-x-2">
-                    {achievement.certificate && (
-                      <button
-                        onClick={() => downloadCertificate(achievement)}
-                        className="flex-1 btn-outline text-sm flex items-center justify-center space-x-1"
-                      >
-                        <Download className="h-4 w-4" />
-                        <span>Certificate</span>
-                      </button>
-                    )}
-                    <button className="flex-1 btn-outline text-sm flex items-center justify-center space-x-1">
-                      <Share2 className="h-4 w-4" />
-                      <span>Share</span>
-                    </button>
-                  </div>
-                )}
-              </motion.div>
-            )
-          })}
+              </div>
+            </motion.div>
+          ))}
         </div>
-
-        {/* Level System */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="card mt-8"
-        >
-          <div className="text-center">
-            <h2 className="text-2xl font-bold gradient-text mb-4">Your Level Progress</h2>
-            
-            {/* Current Level */}
-            <div className="flex items-center justify-center space-x-4 mb-6">
-              <div className="w-16 h-16 bg-gradient-to-r from-ocean-500 to-green-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-xl">
-                  {Math.floor(totalPoints / 500) + 1}
-                </span>
-              </div>
-              <div className="text-left">
-                <div className="text-2xl font-bold text-gray-800">
-                  Level {Math.floor(totalPoints / 500) + 1}
-                </div>
-                <div className="text-gray-600">
-                  {totalPoints % 500} / 500 XP to next level
-                </div>
-              </div>
-            </div>
-
-            {/* Level Progress Bar */}
-            <div className="max-w-md mx-auto">
-              <div className="w-full bg-gray-200 rounded-full h-4">
-                <div 
-                  className="bg-gradient-to-r from-ocean-500 to-green-500 h-4 rounded-full transition-all duration-300"
-                  style={{ width: `${(totalPoints % 500) / 5}%` }}
-                ></div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
       </div>
     </div>
   )
