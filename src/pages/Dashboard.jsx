@@ -1,5 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { 
   Calendar, 
@@ -13,7 +14,8 @@ import {
   Star,
   Trophy,
   Target,
-  Activity
+  Activity,
+  Flame
 } from 'lucide-react'
 
 const Dashboard = () => {
@@ -266,7 +268,122 @@ const Dashboard = () => {
               })}
             </div>
           </div>
-        )}        {/* Personal Stats */}
+        )}
+
+        {/* Live Cleanup Gamification Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="card bg-gradient-to-r from-blue-500 to-green-500 text-white"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl font-bold mb-2 flex items-center space-x-2">
+                <Activity className="h-6 w-6" />
+                <span>Live Cleanup Status</span>
+              </h2>
+              <p className="text-blue-100">
+                {isAdmin 
+                  ? 'Monitor real-time cleanup progress and participant tracking'
+                  : 'Join live cleanup sessions and earn real-time rewards'
+                }
+              </p>
+            </div>
+            <div className="text-right">
+              <div className="text-3xl font-bold">12</div>
+              <div className="text-blue-100">Active cleanups</div>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="bg-white/10 rounded-lg p-4 text-center">
+              <div className="text-2xl font-bold mb-1">287</div>
+              <div className="text-blue-100 text-sm">Participants Online</div>
+            </div>
+            <div className="bg-white/10 rounded-lg p-4 text-center">
+              <div className="text-2xl font-bold mb-1">1.2K</div>
+              <div className="text-blue-100 text-sm">Kg Collected Today</div>
+            </div>
+            <div className="bg-white/10 rounded-lg p-4 text-center">
+              <div className="text-2xl font-bold mb-1">45</div>
+              <div className="text-blue-100 text-sm">Real-time Achievements</div>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-green-300 rounded-full animate-pulse"></div>
+                <span className="text-blue-100">Live tracking active</span>
+              </div>
+              <div className="flex items-center space-x-1 text-blue-100">
+                <Flame className="h-4 w-4" />
+                <span>Current streak: {user?.streak || 5} days</span>
+              </div>
+            </div>
+            <div className="flex space-x-3">
+              {isAdmin && (
+                <Link to="/admin-tracking" className="btn-outline border-white text-white hover:bg-white hover:text-blue-600">
+                  <Target className="h-4 w-4 mr-2" />
+                  Admin Tracking
+                </Link>
+              )}
+              <Link to="/live-cleanup" className="bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg font-medium transition-colors">
+                <Activity className="h-4 w-4 mr-2 inline" />
+                {isAdmin ? 'Monitor Live' : 'Join Live Cleanup'}
+              </Link>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Recent Achievements & Milestones */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="card"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold gradient-text flex items-center space-x-2">
+              <Trophy className="h-6 w-6" />
+              <span>Recent Achievements & Milestones</span>
+            </h2>
+            <Link to="/achievements" className="btn-outline text-sm">
+              View All
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { icon: '🏆', title: 'Beach Champion', description: 'Reached level 8!', time: '2 hours ago', points: 200 },
+              { icon: '⚡', title: 'Speed Collector', description: 'Collected 25kg in 30 min', time: '1 day ago', points: 150 },
+              { icon: '🎯', title: 'Milestone Crusher', description: 'Completed 5 milestones', time: '2 days ago', points: 300 }
+            ].map((achievement, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.1 * index }}
+                className="flex items-center space-x-3 p-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200"
+              >
+                <div className="text-3xl">{achievement.icon}</div>
+                <div className="flex-1">
+                  <div className="font-semibold text-gray-800">{achievement.title}</div>
+                  <div className="text-sm text-gray-600">{achievement.description}</div>
+                  <div className="flex items-center space-x-2 mt-1">
+                    <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+                      +{achievement.points} points
+                    </span>
+                    <span className="text-xs text-gray-500">{achievement.time}</span>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Personal Stats */}
         <div>
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
             {permissions.canViewAllUsers ? 'Your Personal Stats' : 'Your Impact'}
@@ -488,6 +605,83 @@ const Dashboard = () => {
             </motion.div>
           </div>
         </div>
+
+        {/* Gamification Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="card mb-8"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold gradient-text flex items-center space-x-2">
+              <Trophy className="h-6 w-6" />
+              <span>Your Level & Progress</span>
+            </h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Current Level */}
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gradient-to-r from-ocean-500 to-green-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                <span className="text-white font-bold text-2xl">
+                  {Math.floor((user?.impactPoints || 0) / 500) + 1}
+                </span>
+              </div>
+              <div className="text-lg font-bold text-gray-800">
+                Level {Math.floor((user?.impactPoints || 0) / 500) + 1}
+              </div>
+              <div className="text-sm text-gray-600">
+                {(user?.impactPoints || 0) % 500}/500 XP to next level
+              </div>
+              {/* Level Progress Bar */}
+              <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                <div 
+                  className="bg-gradient-to-r from-ocean-500 to-green-500 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${((user?.impactPoints || 0) % 500) / 5}%` }}
+                ></div>
+              </div>
+            </div>
+            
+            {/* Recent Achievement */}
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Award className="h-8 w-8 text-white" />
+              </div>
+              <div className="font-semibold text-gray-800">Latest Achievement</div>
+              <div className="text-sm text-gray-600">
+                {user?.badges?.[user.badges.length - 1] || 'Complete your first event!'}
+              </div>
+              <div className="text-xs text-green-600 mt-1">+200 XP earned</div>
+            </div>
+            
+            {/* Assessment Progress */}
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Target className="h-8 w-8 text-white" />
+              </div>
+              <div className="font-semibold text-gray-800">Assessments</div>
+              <div className="text-sm text-gray-600">1 of 4 completed</div>
+              <div className="text-xs text-purple-600 mt-1">Complete more to unlock certificates</div>
+            </div>
+          </div>
+          
+          {/* Quick Action Buttons */}
+          <div className="flex justify-center space-x-3 mt-6 pt-6 border-t border-gray-200">
+            <a href="/achievements" className="btn-outline text-sm flex items-center space-x-2">
+              <Award className="h-4 w-4" />
+              <span>View Achievements</span>
+            </a>
+            <a href="/assessments" className="btn-outline text-sm flex items-center space-x-2">
+              <Target className="h-4 w-4" />
+              <span>Take Assessment</span>
+            </a>
+            <a href="/certificates" className="btn-outline text-sm flex items-center space-x-2">
+              <Trophy className="h-4 w-4" />
+              <span>My Certificates</span>
+            </a>
+          </div>
+        </motion.div>
       </div>
     </div>
   )

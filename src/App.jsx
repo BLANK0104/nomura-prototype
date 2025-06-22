@@ -11,6 +11,11 @@ import Community from './pages/Community'
 import Analytics from './pages/Analytics'
 import Profile from './pages/Profile'
 import Settings from './pages/Settings'
+import Achievements from './pages/Achievements'
+import Assessments from './pages/Assessments'
+import Certificates from './pages/Certificates'
+import LiveCleanup from './pages/LiveCleanup'
+import AdminLiveTracking from './pages/AdminLiveTracking'
 import Login from './pages/Login'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -42,10 +47,33 @@ function App() {
                   <ProtectedRoute>
                     <Profile />
                   </ProtectedRoute>
-                } />
-                <Route path="/settings" element={
+                } />                <Route path="/settings" element={
                   <ProtectedRoute>
                     <Settings />
+                  </ProtectedRoute>
+                } />
+                <Route path="/achievements" element={
+                  <ProtectedRoute>
+                    <Achievements />
+                  </ProtectedRoute>
+                } />
+                <Route path="/assessments" element={
+                  <ProtectedRoute>
+                    <Assessments />
+                  </ProtectedRoute>
+                } />                <Route path="/certificates" element={
+                  <ProtectedRoute>
+                    <Certificates />
+                  </ProtectedRoute>
+                } />
+                <Route path="/live-cleanup" element={
+                  <ProtectedRoute>
+                    <LiveCleanup />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin-tracking" element={
+                  <ProtectedRoute adminOnly>
+                    <AdminLiveTracking />
                   </ProtectedRoute>
                 } />
                 <Route path="/admin/*" element={
