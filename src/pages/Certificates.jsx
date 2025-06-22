@@ -11,7 +11,7 @@ import {
   Users,
   Star,
   Trophy,
-  Certificate as CertificateIcon,
+  FileText as CertificateIcon,
   Printer,
   Mail,
   CheckCircle,
